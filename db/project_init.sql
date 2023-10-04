@@ -1,6 +1,10 @@
 create database deliverable4;
 use deliverable4;
 
+CREATE USER 'username1'@'localhost' IDENTIFIED BY 'password123';
+GRANT ALL PRIVILEGES ON deliverable4.* TO 'username1'@'localhost';
+FLUSH PRIVILEGES;
+
 create table Users (
     email varchar(255),
     password varchar(255),

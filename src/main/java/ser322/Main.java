@@ -10,7 +10,7 @@ import ser322.states.ExitState;
 public class Main {
 
     public static void main(String[] args) {
-        String dbUsername = "username";
+        String dbUsername = "username1";
         String dbPassword = "password123";
         String dbUrl = "jdbc:mysql://localhost/deliverable4";
         String driver = "com.mysql.cj.jdbc.Driver";
@@ -36,6 +36,7 @@ public class Main {
         }
         catch(Exception e) {
             System.out.println("Program exception");
+            e.printStackTrace();
         }
     }
 }
