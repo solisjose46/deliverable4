@@ -24,10 +24,9 @@ public class InitState implements StoreState {
         return this.currentState;
     }
 
-    private void printUserTypePrompt() {
+    private void printWelcome() {
         System.out.println("Welcome!");
-        System.out.println("Customer or Seller?");
-        System.out.println("Enter 'customer' or 'seller': ");
+        System.out.println("Cusomer login");
     }
 
     private void printEmailPrompt() {
@@ -42,13 +41,7 @@ public class InitState implements StoreState {
     public void play() {
         while(true) {
             try {
-                printUserTypePrompt();
-                String userType =  scanner.nextLine().toLowerCase();
-
-                if(!userType.equals("customer") && !userType.equals("seller")) {
-                    System.out.println("Invalid choice");
-                    continue;
-                }
+                printWelcome();
 
                 printEmailPrompt();
                 String email = scanner.nextLine();
@@ -58,13 +51,7 @@ public class InitState implements StoreState {
 
                 dbManager.setUser(email, password);
 
-                if(userType.equals("customer")) {
-                    this.currentState = new CustomerHomeState();
-                }
-                else {
-                    this.currentState = new SellerHomeState();
-                }
-
+                this.currentState = new CustomerHomeState();
                 this.currentState.setDatabase(dbManager);
                 this.currentState.setScanner(scanner);
 

@@ -35,6 +35,30 @@ public class DBManager {
         System.out.println("login successful");
     }
 
+    public void customerReadReviews() throws SQLException {
+        // Get reviews made by the user: product name, description (review), rating
+        String query = "SELECT R.review_id, P.name, R.description, R.rating " +
+                    "FROM Reviews R " +
+                    "INNER JOIN Products P ON R.product_id = P.product_id " +
+                    "WHERE R.email = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, user.username);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            String reviewId = resultSet.getString("review_id");
+            String productName = resultSet.getString("name");
+            String description = resultSet.getString("description");
+            int rating = resultSet.getInt("rating");
+            System.out.println("Review id: " + reviewId);
+            System.out.println("Product Name: " + productName);
+            System.out.println("Description (Review): " + description);
+            System.out.println("Rating: " + rating);
+            System.out.println();
+        }
+    }
+
+
+
     public void userReadReviews(Integer productId) throws SQLException {
         // Calculate and print average rating for the product
         String query = "SELECT AVG(rating) AS averageRating FROM Reviews WHERE product_id = ?";
@@ -127,9 +151,9 @@ public class DBManager {
         return realEmail.equals(user.email);
     }
 
-    public void customerUpdateReview(Integer reviewId, Review review) throws SQLException {
+    public void customerUpdateReview(Review review) throws SQLException {
         // Validate if the user is associated with the review
-        if (!validateCustomerReview(reviewId)) {
+        if (!validateCustomerReview(review.reviewId)) {
             System.out.println("Review error: You do not have permission to update this review.");
             return;
         }
@@ -139,16 +163,16 @@ public class DBManager {
         PreparedStatement preparedStatement = connection.prepareStatement(query)
         preparedStatement.setString(1, review.description);
         preparedStatement.setInt(2, review.rating);
-        preparedStatement.setInt(3, reviewId);
+        preparedStatement.setInt(3, review.reviewId);
         int rowsAffected = preparedStatement.executeUpdate();
         if (rowsAffected > 0) {
             System.out.println("Review successfully updated!");
         }
     }
 
-    public void customerDeleteReview(Integer reviewId) throws SQLException {
+    public void customerDeleteReview(Review review) throws SQLException {
         // Validate if the user is associated with the review
-        if (!validateCustomerReview(reviewId)) {
+        if (!validateCustomerReview(review.reviewId)) {
             System.out.println("Review error: You do not have permission to delete this review.");
             return;
         }
@@ -156,7 +180,7 @@ public class DBManager {
         // Delete the review from the table
         String query = "DELETE FROM Reviews WHERE review_id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query)
-        preparedStatement.setInt(1, reviewId);
+        preparedStatement.setInt(1, review.reviewId);
         int rowsAffected = preparedStatement.executeUpdate();
         if (rowsAffected > 0) {
             System.out.println("Review successfully removed!");
