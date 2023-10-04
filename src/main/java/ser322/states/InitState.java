@@ -8,7 +8,7 @@ public class InitState implements StoreState {
     Scanner scanner;
     StoreState currentState;
 
-    InitState() {
+    public InitState() {
         this.currentState = this;
     }
 
@@ -60,7 +60,7 @@ public class InitState implements StoreState {
 
                 return;
             }
-            catch(SQLException e) {
+            catch(Exception e) {
                 System.out.println("Error with email and/or password");
             }
         }

@@ -1,6 +1,7 @@
 package ser322;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.Scanner;
 import ser322.states.StoreState;
 import ser322.states.InitState;
@@ -15,12 +16,12 @@ public class Main {
         String driver = "com.mysql.cj.jdbc.Driver";
 
         try {
-            class.forName(driver);
-            Connection connection = DriverManager.getConnection(url, dbUsername, dbPassword);
+            Class.forName(driver);
+            Connection connection = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
             connection.setAutoCommit(false);
-            DBManager dbManager = new dbManager(connection);
+            DBManager dbManager = new DBManager(connection);
 
-            StoreState currentState = InitState();
+            StoreState currentState = new InitState();
             Scanner scanner = new Scanner(System.in);
             
             currentState.setDatabase(dbManager);

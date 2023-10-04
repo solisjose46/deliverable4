@@ -1,5 +1,6 @@
 package ser322.states;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 import ser322.DBManager;
 import ser322.entities.Review;
@@ -28,11 +29,11 @@ public class CustomerShoppingState implements StoreState {
         return this.currentState;
     }
 
-    private void printShoppingMenu() {
+    private void printShoppingMenu() throws SQLException {
         System.out.println("Shopping");
         System.out.println("--------");
-        this.dbManager.customerReadProducts();
-        this.dbManager.customerReadCart();
+        dbManager.customerReadProducts();
+        dbManager.customerReadCart();
         System.out.println("-------------------");
         System.out.println("a) add product to cart");
         System.out.println("b) remove product from cart");
@@ -63,7 +64,7 @@ public class CustomerShoppingState implements StoreState {
     public void play() {
         while(true) {
             try {
-                printCustomerHomeMenu();
+                printShoppingMenu();
                 String userInput = scanner.nextLine().toLowerCase();
 
 
@@ -96,7 +97,7 @@ public class CustomerShoppingState implements StoreState {
                         break;
                     case "e":
                         Review review = new Review();
-                        review.email = user.email;
+                        review.email = dbManager.user.email;
 
                         printProductIdPrompt();
                         productId = scanner.nextLine();

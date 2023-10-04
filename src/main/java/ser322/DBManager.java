@@ -10,7 +10,7 @@ import ser322.entities.User;
 
 public class DBManager {
     private Connection connection;
-    private User user;
+    public User user;
 
     public DBManager(Connection connection) {
         this.connection = connection;
@@ -20,7 +20,7 @@ public class DBManager {
         String query = "SELECT password FROM Users where email = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, email);
-
+        ResultSet resultSet = preparedStatement.executeQuery();
         String realPassword = "";
         if(resultSet.next()) {
             realPassword = resultSet.getString("password");
@@ -44,7 +44,7 @@ public class DBManager {
                     "INNER JOIN Products P ON R.product_id = P.product_id " +
                     "WHERE R.email = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setString(1, user.username);
+        preparedStatement.setString(1, user.email);
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
             String reviewId = resultSet.getString("review_id");
@@ -59,12 +59,10 @@ public class DBManager {
         }
     }
 
-
-
     public void userReadReviews(Integer productId) throws SQLException {
         // Calculate and print average rating for the product
         String query = "SELECT AVG(rating) AS averageRating FROM Reviews WHERE product_id = ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query)
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(1, productId);
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
@@ -78,9 +76,9 @@ public class DBManager {
                 "INNER JOIN Users U ON R.email = U.email " +
                 "WHERE R.product_id = ?";
 
-        preparedStatement = connection.prepareStatement(query)
+        preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(1, productId);
-        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
             String name = resultSet.getString("name");
             String description = resultSet.getString("description");
@@ -94,9 +92,9 @@ public class DBManager {
         String query = "SELECT P.product_id, P.name, P.description, P.price FROM Products P " +
                 "WHERE P.product_id = ? AND P.email = ?";
 
-        PreparedStatement preparedStatement = connection.prepareStatement(query)
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(1, productId);
-        preparedStatement.setString(2, user.username);
+        preparedStatement.setString(2, user.email);
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
             int productID = resultSet.getInt("product_id");
@@ -128,8 +126,8 @@ public class DBManager {
     public void customerCreateReview(Review review) throws SQLException {
         // Add review to Review table
         String query = "INSERT INTO Reviews (email, product_id, description, rating) VALUES (?, ?, ?, ?)";
-        PreparedStatement preparedStatement = connection.prepareStatement(query)
-        preparedStatement.setString(1, user.username);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, user.email);
         preparedStatement.setInt(2, review.productId);
         preparedStatement.setString(3, review.description);
         preparedStatement.setInt(4, review.rating);
@@ -162,7 +160,7 @@ public class DBManager {
 
         // Update the review description and rating
         String query = "UPDATE Reviews SET description = ?, rating = ? WHERE review_id = ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query)
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, review.description);
         preparedStatement.setInt(2, review.rating);
         preparedStatement.setInt(3, review.reviewId);
@@ -181,7 +179,7 @@ public class DBManager {
 
         // Delete the review from the table
         String query = "DELETE FROM Reviews WHERE review_id = ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query)
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setInt(1, review.reviewId);
         int rowsAffected = preparedStatement.executeUpdate();
         if (rowsAffected > 0) {
@@ -193,7 +191,7 @@ public class DBManager {
         // Check if there are any rows in the cart with the user's email
         String cartCheckQuery = "SELECT COUNT(*) AS count FROM Carts WHERE email = ?";
         PreparedStatement cartCheckStatement = connection.prepareStatement(cartCheckQuery);
-        cartCheckStatement.setString(1, user.username);
+        cartCheckStatement.setString(1, user.email);
         ResultSet cartCheckResult = cartCheckStatement.executeQuery();
         if (!cartCheckResult.next() || cartCheckResult.getInt("count") == 0) {
             System.out.println("Cart is empty!");
@@ -205,7 +203,7 @@ public class DBManager {
                 "INNER JOIN Products P ON C.product_id = P.product_id " +
                 "WHERE C.email = ?";
         PreparedStatement cartStatement = connection.prepareStatement(cartQuery);
-        cartStatement.setString(1, user.username);
+        cartStatement.setString(1, user.email);
         ResultSet resultSet = cartStatement.executeQuery();
         double total = 0;
         while (resultSet.next()) {
@@ -223,15 +221,15 @@ public class DBManager {
     public void customerUpdateAddCart(Integer productId) throws SQLException {
         // Check if the product and user's email are not in the Cart table
         String checkQuery = "SELECT COUNT(*) AS count FROM Carts WHERE email = ? AND product_id = ?";
-        PreparedStatement checkStatement = connection.prepareStatement(checkQuery)
-        checkStatement.setString(1, user.username);
+        PreparedStatement checkStatement = connection.prepareStatement(checkQuery);
+        checkStatement.setString(1, user.email);
         checkStatement.setInt(2, productId);
         ResultSet checkResult = checkStatement.executeQuery();
         if (checkResult.next() && checkResult.getInt("count") == 0) {
             // Add the product to the Cart table with quantity one
             String insertQuery = "INSERT INTO Carts (email, product_id, quantity) VALUES (?, ?, 1)";
-            PreparedStatement insertStatement = connection.prepareStatement(insertQuery)
-            insertStatement.setString(1, user.username);
+            PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+            insertStatement.setString(1, user.email);
             insertStatement.setInt(2, productId);
             int rowsAffected = insertStatement.executeUpdate();
             if (rowsAffected > 0) {
@@ -240,8 +238,8 @@ public class DBManager {
         } else {
             // Update quantity by one
             String updateQuery = "UPDATE Carts SET quantity = quantity + 1 WHERE email = ? AND product_id = ?";
-            PreparedStatement updateStatement = connection.prepareStatement(updateQuery)
-            updateStatement.setString(1, user.username);
+            PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
+            updateStatement.setString(1, user.email);
             updateStatement.setInt(2, productId);
             int rowsAffected = updateStatement.executeUpdate();
             if (rowsAffected > 0) {
@@ -253,15 +251,15 @@ public class DBManager {
     public void customerUpdateRemoveCart(Integer productId) throws SQLException {
         // Using user's email and product id, reduce cart quantity by one
         String updateQuery = "UPDATE Carts SET quantity = GREATEST(0, quantity - 1) WHERE email = ? AND product_id = ?";
-        PreparedStatement updateStatement = connection.prepareStatement(updateQuery)
-        updateStatement.setString(1, user.username);
+        PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
+        updateStatement.setString(1, user.email);
         updateStatement.setInt(2, productId);
         int rowsAffected = updateStatement.executeUpdate();
         if (rowsAffected > 0) {
             // If quantity is zero, remove row
             String deleteQuery = "DELETE FROM Carts WHERE email = ? AND product_id = ? AND quantity = 0";
-            PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery)
-            deleteStatement.setString(1, user.username);
+            PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery);
+            deleteStatement.setString(1, user.email);
             deleteStatement.setInt(2, productId);
             deleteStatement.executeUpdate();
         }
@@ -271,8 +269,8 @@ public class DBManager {
         // Using user's email, get product ids and return as ArrayList
         ArrayList<Integer> productIds = new ArrayList<>();
         String query = "SELECT product_id FROM Carts WHERE email = ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query)
-        preparedStatement.setString(1, user.username);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, user.email);
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
             int productId = resultSet.getInt("product_id");
@@ -284,8 +282,8 @@ public class DBManager {
     public void customerDeleteCart() throws SQLException {
         // Remove all products associated with the user from the Cart table
         String query = "DELETE FROM Carts WHERE email = ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query)
-        preparedStatement.setString(1, user.username);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, user.email);
         preparedStatement.executeUpdate();
     }
 
@@ -308,8 +306,8 @@ public class DBManager {
 
         // Add product IDs to the Order table with the same timestamp
         String query = "INSERT INTO Orders (email, product_id, quantity, transaction_date) VALUES (?, ?, 1, ?)";
-        PreparedStatement preparedStatement = connection.prepareStatement(query)
-        preparedStatement.setString(1, user.username);
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, user.email);
         preparedStatement.setTimestamp(3, timestamp);
         for (Integer productId : productIds) {
             preparedStatement.setInt(2, productId);

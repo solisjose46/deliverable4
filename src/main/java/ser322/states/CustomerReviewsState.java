@@ -1,5 +1,6 @@
 package ser322.states;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 import ser322.DBManager;
 import ser322.entities.Review;
@@ -28,10 +29,10 @@ public class CustomerReviewsState implements StoreState {
         return this.currentState;
     }
 
-    private void printReviewMenu() {
+    private void printReviewMenu() throws SQLException {
         System.out.println("Reviews");
         System.out.println("--------");
-        this.dbManager.customerReadReviews();
+        dbManager.customerReadReviews();
         System.out.println("-------------------");
         System.out.println("a) update review");
         System.out.println("b) remove review");
@@ -59,11 +60,11 @@ public class CustomerReviewsState implements StoreState {
     public void play() {
         while(true) {
             try {
-                printCustomerHomeMenu();
+                printReviewMenu();
                 String userInput = scanner.nextLine().toLowerCase();
                 StoreState nextState;
                 Review review = new Review();
-                review.email = user.email;
+                review.email = dbManager.user.email;
 
                 switch(userInput) {
                     case "a":
