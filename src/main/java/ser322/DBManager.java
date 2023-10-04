@@ -23,13 +23,14 @@ public class DBManager {
         ResultSet resultSet = preparedStatement.executeQuery();
         String realPassword = "";
         if(resultSet.next()) {
-            realPassword = resultSet.getString("password");
-            
+            realPassword = resultSet.getString("password");   
         }
 
         if(!realPassword.equals(password)) {
             throw new SQLException("Bad password");
         }
+
+        user = new User();
 
         user.email = email;
         user.password = password;
@@ -133,46 +134,56 @@ public class DBManager {
         preparedStatement.setInt(4, review.rating);
         int rowsAffected = preparedStatement.executeUpdate();
         if (rowsAffected > 0) {
+            connection.commit();
             System.out.println("Review successfully posted!");
         }
     }
 
-    public boolean validateCustomerReview(Integer reviewId) throws SQLException {
+    private boolean validateCustomerReview(Review review) throws SQLException {
+        System.out.println("validateCustomerReview A");
         // Check if user's email is associated with the review
         String query = "SELECT email FROM Reviews WHERE review_id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setInt(1, reviewId);
+        System.out.println("validateCustomerReview B");
+        preparedStatement.setInt(1, review.reviewId);
         ResultSet resultSet = preparedStatement.executeQuery();
         String realEmail = "";
+        System.out.println("validateCustomerReview C");
         if (resultSet.next()) {
-            realEmail = resultSet.getString("count");
+            realEmail = resultSet.getString("email");
         }
 
+        System.out.println("validateCustomerReview D");
         return realEmail.equals(user.email);
     }
 
     public void customerUpdateReview(Review review) throws SQLException {
+        System.out.println("customerUpdateReview A");
         // Validate if the user is associated with the review
-        if (!validateCustomerReview(review.reviewId)) {
+        if (!validateCustomerReview(review)) {
             System.out.println("Review error: You do not have permission to update this review.");
             return;
         }
 
+        System.out.println("customerUpdateReview B");
         // Update the review description and rating
         String query = "UPDATE Reviews SET description = ?, rating = ? WHERE review_id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
+        System.out.println("customerUpdateReview C");
         preparedStatement.setString(1, review.description);
         preparedStatement.setInt(2, review.rating);
         preparedStatement.setInt(3, review.reviewId);
         int rowsAffected = preparedStatement.executeUpdate();
+        System.out.println("customerUpdateReview D");
         if (rowsAffected > 0) {
+            connection.commit();
             System.out.println("Review successfully updated!");
         }
     }
 
     public void customerDeleteReview(Review review) throws SQLException {
         // Validate if the user is associated with the review
-        if (!validateCustomerReview(review.reviewId)) {
+        if (!validateCustomerReview(review)) {
             System.out.println("Review error: You do not have permission to delete this review.");
             return;
         }
@@ -183,6 +194,7 @@ public class DBManager {
         preparedStatement.setInt(1, review.reviewId);
         int rowsAffected = preparedStatement.executeUpdate();
         if (rowsAffected > 0) {
+            connection.commit();
             System.out.println("Review successfully removed!");
         }
     }
@@ -233,6 +245,7 @@ public class DBManager {
             insertStatement.setInt(2, productId);
             int rowsAffected = insertStatement.executeUpdate();
             if (rowsAffected > 0) {
+                connection.commit();
                 System.out.println("Added product to cart!");
             }
         } else {
@@ -243,6 +256,7 @@ public class DBManager {
             updateStatement.setInt(2, productId);
             int rowsAffected = updateStatement.executeUpdate();
             if (rowsAffected > 0) {
+                connection.commit();
                 System.out.println("Added product to cart!");
             }
         }
@@ -256,12 +270,14 @@ public class DBManager {
         updateStatement.setInt(2, productId);
         int rowsAffected = updateStatement.executeUpdate();
         if (rowsAffected > 0) {
+            connection.commit();
             // If quantity is zero, remove row
             String deleteQuery = "DELETE FROM Carts WHERE email = ? AND product_id = ? AND quantity = 0";
             PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery);
             deleteStatement.setString(1, user.email);
             deleteStatement.setInt(2, productId);
             deleteStatement.executeUpdate();
+            connection.commit();
         }
     }
 
@@ -285,6 +301,7 @@ public class DBManager {
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, user.email);
         preparedStatement.executeUpdate();
+        connection.commit();
     }
 
     public void customerCreateOrder() throws SQLException {
@@ -312,6 +329,7 @@ public class DBManager {
         for (Integer productId : productIds) {
             preparedStatement.setInt(2, productId);
             preparedStatement.executeUpdate();
+            connection.commit();
         }
         System.out.println("Order successfully created!");
     }

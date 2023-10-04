@@ -10,6 +10,10 @@ dependencies {
     implementation fileTree(dir: 'lib', include: ['mysql-connector-java-8.1.0.jar'])
 }
 
+run {
+    standardInput = System.in
+}
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(8)

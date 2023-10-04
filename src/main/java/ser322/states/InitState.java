@@ -29,7 +29,7 @@ public class InitState implements StoreState {
 
     private void printWelcome() {
         System.out.println("Welcome!");
-        System.out.println("Cusomer login");
+        System.out.println("Customer login");
     }
 
     private void printEmailPrompt() {

@@ -32,7 +32,9 @@ public class CustomerShoppingState implements StoreState {
     private void printShoppingMenu() throws SQLException {
         System.out.println("Shopping");
         System.out.println("--------");
+        System.out.println("\nProducts for sale");
         dbManager.customerReadProducts();
+        System.out.println("\nYour shopping cart");
         dbManager.customerReadCart();
         System.out.println("-------------------");
         System.out.println("a) add product to cart");
