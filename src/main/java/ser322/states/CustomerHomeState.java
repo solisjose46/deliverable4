@@ -1,5 +1,8 @@
 package ser322.states;
 
+import java.util.Scanner;
+import ser322.DBManager;
+
 public class CustomerHomeState implements StoreState {
     DBManager dbManager;
     Scanner scanner;
@@ -59,7 +62,7 @@ public class CustomerHomeState implements StoreState {
             this.currentState = nextState;
             this.currentState.setDatabase(dbManager);
             this.currentState.setScanner(scanner);
-            
+
             return;            
         }
 

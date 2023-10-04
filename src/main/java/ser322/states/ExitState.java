@@ -1,5 +1,8 @@
 package ser322.states;
 
+import java.util.Scanner;
+import ser322.DBManager;
+
 public class ExitState implements StoreState {
     DBManager dbManager;
     Scanner scanner;

@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import ser322.entities.Product;
 import ser322.entities.Review;
 import ser322.entities.User;
 
@@ -31,6 +30,9 @@ public class DBManager {
         if(!realPassword.equals(password)) {
             throw new SQLException("Bad password");
         }
+
+        user.email = email;
+        user.password = password;
 
         System.out.println("login successful");
     }

@@ -1,5 +1,9 @@
 package ser322.states;
 
+import java.util.Scanner;
+import ser322.DBManager;
+import ser322.entities.Review;
+
 public class CustomerReviewsState implements StoreState {
     DBManager dbManager;
     Scanner scanner;

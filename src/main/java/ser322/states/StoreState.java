@@ -1,7 +1,7 @@
 package ser322.states;
 
 import java.util.Scanner;
-import ser322.entities.User;
+import ser322.DBManager;
 
 public interface StoreState {
     public void setDatabase(DBManager dbManager);
