@@ -13,8 +13,13 @@ public class DBManager {
     private Connection connection;
     private User user;
 
-    public DBManager(Connection connection, String email, String password) throws SQLException {
+    public DBManager(Connection connection) {
         this.connection = connection;
+
+
+    }
+
+    public void setUser(String email, String password) throws SQLException {
         String query = "SELECT password FROM Users where email = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         preparedStatement.setString(1, email);
@@ -26,15 +31,10 @@ public class DBManager {
         }
 
         if(!realPassword.equals(password)) {
-            throws SQLException("Bad password")
+            throw new SQLException("Bad password");
         }
 
-        System.out.println("login successful")
-
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+        System.out.println("login successful");
     }
 
     public void userReadReviews(Integer productId) throws SQLException {
