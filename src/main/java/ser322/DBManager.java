@@ -15,8 +15,6 @@ public class DBManager {
 
     public DBManager(Connection connection) {
         this.connection = connection;
-
-
     }
 
     public void setUser(String email, String password) throws SQLException {
@@ -85,111 +83,6 @@ public class DBManager {
 
         // Call userReadReviews to print reviews for the product
         userReadReviews(productId);
-    }
-
-    public void sellerCreateProduct(Product product) throws SQLException {
-        // Add product to Product table with user's email
-        String query = "INSERT INTO Products (email, name, description, price, quantity) VALUES (?, ?, ?, ?, ?)";
-        PreparedStatement preparedStatement = connection.prepareStatement(query)
-        preparedStatement.setString(1, user.username);
-        preparedStatement.setString(2, product.name);
-        preparedStatement.setString(3, product.description);
-        preparedStatement.setDouble(4, product.price);
-        preparedStatement.setInt(5, product.quantity);
-        int rowsAffected = preparedStatement.executeUpdate();
-        if (rowsAffected > 0) {
-            System.out.println(product.name + " successfully added!");
-        }
-    }
-
-    public void sellerReadProducts() throws SQLException {
-        // Print all products with user's email
-        String query = "SELECT product_id, name, description, price, quantity FROM Products WHERE email = ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query)
-        preparedStatement.setString(1, user.username);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()) {
-            int productId = resultSet.getInt("product_id");
-            String name = resultSet.getString("name");
-            String description = resultSet.getString("description");
-            double price = resultSet.getDouble("price");
-            int quantity = resultSet.getInt("quantity");
-            System.out.println("Product ID: " + productId + ", Name: " + name +
-                    ", Description: " + description + ", Price: " + price + ", Quantity: " + quantity);
-        }
-    }
-
-    public boolean validateSellerProduct(Integer productId) throws SQLException {
-        // Check if user's email is associated with the product
-        String query = "SELECT email FROM Products WHERE product_id = ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setInt(1, productId);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        String email = "";
-        if (resultSet.next()) {
-            email = resultSet.getInt("count");
-        }
-
-        return user.email.equals(email);
-    }
-
-    public void sellerUpdateProductDescription(Integer productId, String description) throws SQLException {
-        // Validate if the user is associated with the product
-        if (!validateSellerProduct(productId)) {
-            System.out.println("Item error: You do not have permission to update this product.");
-            return;
-        }
-
-        // Update the product's description
-        String query = "UPDATE Products SET description = ? WHERE product_id = ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query)
-        preparedStatement.setString(1, description);
-        preparedStatement.setInt(2, productId);
-        int rowsAffected = preparedStatement.executeUpdate();
-        if (rowsAffected > 0) {
-            System.out.println(productId + " description successfully updated!");
-        }
-    }
-
-    public void sellerUpdateProductQuantity(Integer productId, Integer quantity) throws SQLException {
-        // Validate if the user is associated with the product
-        if (!validateSellerProduct(productId)) {
-            System.out.println("Item error: You do not have permission to update this product.");
-            return;
-        }
-
-        // Validate that the quantity is greater than 0
-        if (quantity <= 0) {
-            System.out.println("Invalid quantity. Quantity must be greater than 0.");
-            return;
-        }
-
-        // Update the product's quantity
-        String query = "UPDATE Products SET quantity = ? WHERE product_id = ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query)
-        preparedStatement.setInt(1, quantity);
-        preparedStatement.setInt(2, productId);
-        int rowsAffected = preparedStatement.executeUpdate();
-        if (rowsAffected > 0) {
-            System.out.println(productId + " quantity successfully updated!");
-        }
-    }
-
-    public void sellerDeleteProduct(Integer productId) throws SQLException {
-        // Validate if the user is associated with the product
-        if (!validateSellerProduct(productId)) {
-            System.out.println("Item error: You do not have permission to delete this product.");
-            return;
-        }
-
-        // Delete the product from the table
-        String query = "DELETE FROM Products WHERE product_id = ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setInt(1, productId);
-        int rowsAffected = preparedStatement.executeUpdate();
-        if (rowsAffected > 0) {
-            System.out.println(productId + " successfully removed!");
-        }
     }
 
     public void customerReadProducts() throws SQLException {
