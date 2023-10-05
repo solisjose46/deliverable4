@@ -32,7 +32,6 @@ load these scripts in sql shell: source example.sql;
 
 ## Building and running program without gradle
 1. compile
-javac -cp ./lib/mysql-connector-java-8.1.0.jar ./src/main/java/ser322/*.java ./src/main/java/ser322/entities/*.java ./src/main/java/ser322/states/*.java
+**javac -cp ./lib/mysql-connector-java-8.1.0.jar ./src/main/java/ser322/*.java ./src/main/java/ser322/entities/*.java ./src/main/java/ser322/states/*.java**
 
-2. Run the program 
-java -cp ./src/main/java:./lib/mysql-connector-java-8.1.0.jar ser322.Main
+2. Run the program **java -cp ./src/main/java:./lib/mysql-connector-java-8.1.0.jar ser322.Main**

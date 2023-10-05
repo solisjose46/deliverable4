@@ -140,41 +140,32 @@ public class DBManager {
     }
 
     private boolean validateCustomerReview(Review review) throws SQLException {
-        System.out.println("validateCustomerReview A");
         // Check if user's email is associated with the review
         String query = "SELECT email FROM Reviews WHERE review_id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        System.out.println("validateCustomerReview B");
         preparedStatement.setInt(1, review.reviewId);
         ResultSet resultSet = preparedStatement.executeQuery();
         String realEmail = "";
-        System.out.println("validateCustomerReview C");
         if (resultSet.next()) {
             realEmail = resultSet.getString("email");
         }
-
-        System.out.println("validateCustomerReview D");
         return realEmail.equals(user.email);
     }
 
     public void customerUpdateReview(Review review) throws SQLException {
-        System.out.println("customerUpdateReview A");
         // Validate if the user is associated with the review
         if (!validateCustomerReview(review)) {
             System.out.println("Review error: You do not have permission to update this review.");
             return;
         }
 
-        System.out.println("customerUpdateReview B");
         // Update the review description and rating
         String query = "UPDATE Reviews SET description = ?, rating = ? WHERE review_id = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        System.out.println("customerUpdateReview C");
         preparedStatement.setString(1, review.description);
         preparedStatement.setInt(2, review.rating);
         preparedStatement.setInt(3, review.reviewId);
         int rowsAffected = preparedStatement.executeUpdate();
-        System.out.println("customerUpdateReview D");
         if (rowsAffected > 0) {
             connection.commit();
             System.out.println("Review successfully updated!");
