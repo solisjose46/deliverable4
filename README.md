@@ -5,6 +5,8 @@ located in ./src/main/java/ser322
 
 ## link to video
 
+**https://youtu.be/BE_GDwwrPhc**
+
 ## Assumptions
 - You have mysql installed
 - You have sql driver jar in lib
